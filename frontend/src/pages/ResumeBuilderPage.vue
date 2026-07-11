@@ -1,7 +1,23 @@
+<script setup>
+import BuilderHeader from "../components/BuilderHeader.vue";
+import Sidebar from "../components/Sidebar.vue";
+import PreviewPanel from "../components/PreviewPanel.vue";
+</script>
+
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <h1 class="text-4xl font-bold">
-      Resume Builder 🚀
-    </h1>
-  </div>
+
+<div class="h-screen flex flex-col">
+
+    <BuilderHeader />
+
+    <div class="flex flex-1 overflow-hidden">
+
+        <Sidebar />
+
+        <PreviewPanel />
+
+    </div>
+
+</div>
+
 </template>

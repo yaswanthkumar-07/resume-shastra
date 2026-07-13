@@ -1,12 +1,8 @@
-<!-- src/components/PreviewPanel.vue -->
 <template>
   <div class="preview-panel">
-    <!-- Desktop/Tablet View -->
     <div class="hidden md:flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 h-full overflow-hidden">
       <div class="flex-1 overflow-y-auto">
-        <!-- Resume Container -->
         <div class="w-full max-w-2xl mx-auto px-6 py-8">
-          <!-- Header Section -->
           <div class="mb-6 pb-6 border-b border-gray-200">
             <h1 v-if="resumeData.fullName" class="text-2xl font-bold text-gray-900 mb-1" style="font-family: 'IBM Plex Sans', sans-serif;">
               {{ resumeData.fullName }}
@@ -37,7 +33,6 @@
             </div>
           </div>
 
-          <!-- Professional Summary Section -->
           <div v-if="resumeData.summary" class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-2" style="font-family: 'IBM Plex Sans', sans-serif;">Professional Summary</h2>
             <p class="text-sm text-gray-700 leading-relaxed" style="font-family: 'IBM Plex Sans', sans-serif;">
@@ -45,7 +40,6 @@
             </p>
           </div>
 
-          <!-- Experience Section -->
           <div v-if="resumeData.experience && resumeData.experience.length > 0" class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3" style="font-family: 'IBM Plex Sans', sans-serif;">Experience</h2>
             <div class="space-y-4">
@@ -62,7 +56,6 @@
             </div>
           </div>
 
-          <!-- Education Section -->
           <div v-if="resumeData.education && resumeData.education.length > 0" class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3" style="font-family: 'IBM Plex Sans', sans-serif;">Education</h2>
             <div class="space-y-3">
@@ -76,7 +69,6 @@
             </div>
           </div>
 
-          <!-- Skills Section -->
           <div v-if="resumeData.skills && resumeData.skills.length > 0" class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3" style="font-family: 'IBM Plex Sans', sans-serif;">Skills</h2>
             <div class="flex flex-wrap gap-2">
@@ -91,7 +83,6 @@
             </div>
           </div>
 
-          <!-- Projects Section -->
           <div v-if="resumeData.projects && resumeData.projects.length > 0" class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3" style="font-family: 'IBM Plex Sans', sans-serif;">Projects</h2>
             <div class="space-y-4">
@@ -104,7 +95,6 @@
             </div>
           </div>
 
-          <!-- Certifications Section -->
           <div v-if="resumeData.certifications && resumeData.certifications.length > 0" class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3" style="font-family: 'IBM Plex Sans', sans-serif;">Certifications</h2>
             <div class="space-y-2">
@@ -115,7 +105,6 @@
             </div>
           </div>
 
-          <!-- Empty State -->
           <div v-if="isEmpty" class="text-center py-12">
             <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -125,18 +114,8 @@
           </div>
         </div>
       </div>
-
-      <!-- Print Background -->
-      <style scoped>
-        @media print {
-          .preview-panel {
-            background: white;
-          }
-        }
-      </style>
     </div>
 
-    <!-- Mobile View - Button -->
     <div class="md:hidden">
       <button
         @click="isPreviewOpen = true"
@@ -150,7 +129,6 @@
         Preview
       </button>
 
-      <!-- Mobile Preview Modal -->
       <Transition name="modal">
         <div v-if="isPreviewOpen" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end">
           <div class="bg-white w-full rounded-t-2xl shadow-xl max-h-[90vh] overflow-y-auto">
@@ -167,7 +145,6 @@
             </div>
 
             <div class="px-4 py-6">
-              <!-- Same content as desktop preview -->
               <h1 v-if="resumeData.fullName" class="text-xl font-bold text-gray-900 mb-2" style="font-family: 'IBM Plex Sans', sans-serif;">
                 {{ resumeData.fullName }}
               </h1>
@@ -256,5 +233,11 @@ const isEmpty = computed(() => {
 
 .modal-leave-to {
   opacity: 0;
+}
+
+@media print {
+  .preview-panel {
+    background: white;
+  }
 }
 </style>

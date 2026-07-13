@@ -5,6 +5,7 @@ import com.resumeshastra.entity.Resume;
 import com.resumeshastra.mapper.ResumeMapper;
 import com.resumeshastra.repository.ResumeRepository;
 import com.resumeshastra.service.PersonalDetailsService;
+import com.resumeshastra.response.PersonalDetailsResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +17,14 @@ public class PersonalDetailsServiceImpl implements PersonalDetailsService {
     private final ResumeMapper resumeMapper;
 
     @Override
-    public String savePersonalDetails(PersonalDetailsDTO dto) {
+    public PersonalDetailsResponseDTO savePersonalDetails(PersonalDetailsDTO dto) {
 
         Resume resume = resumeMapper.dtoToEntity(dto);
 
-        resumeRepository.save(resume);
+        Resume savedResume = resumeRepository.save(resume);
 
-        return "Personal details saved successfully";
+return PersonalDetailsResponseDTO.builder()
+        .resumeId(savedResume.getId())
+        .build();
     }
 }

@@ -5,20 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ApiResponse<T> {
+public class PersonalDetailsResponseDTO {
 
-    private String status;
-
-    private String message;
-
-    private T data;
-
-    private List<String> errors;
+    private Long resumeId;
 
 }

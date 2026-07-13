@@ -1,7 +1,5 @@
-<!-- src/pages/ResumeBuilderPage.vue -->
 <template>
   <div class="flex flex-col h-screen bg-gray-50">
-    <!-- Header -->
     <BuilderHeader
       :current-step="currentStep"
       :current-step-label="currentStepLabel"
@@ -10,27 +8,21 @@
       @export="handleExport"
     />
 
-    <!-- Main Content -->
     <div class="flex flex-1 overflow-hidden">
-      <!-- Sidebar -->
       <Sidebar
         :current-step="currentStep"
         :completed-steps="completedSteps"
         @navigate="navigateToStep"
       />
 
-      <!-- Builder + Preview Layout -->
       <div class="flex-1 flex flex-col lg:flex-row gap-6 p-6 overflow-hidden">
-        <!-- Builder Form (60% on desktop) -->
         <div class="flex-1 lg:w-3/5 overflow-y-auto">
           <div class="max-w-2xl">
-            <!-- Step 1: Personal Details -->
             <form
               v-if="currentStep === 1"
               @submit.prevent="handleNext"
               class="space-y-6"
             >
-              <!-- Section Title -->
               <div class="mb-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-2" style="font-family: Manrope, sans-serif;">
                   Personal Details
@@ -40,13 +32,11 @@
                 </p>
               </div>
 
-              <!-- Required Fields Section -->
               <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
                 <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wide" style="font-family: Inter, sans-serif;">
                   Required Information
                 </h3>
 
-                <!-- Full Name -->
                 <div class="space-y-2">
                   <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
                     Full Name <span class="text-red-500">*</span>
@@ -66,7 +56,6 @@
                   <p v-if="errors.fullName" class="text-sm text-red-600">{{ errors.fullName }}</p>
                 </div>
 
-                <!-- Email -->
                 <div class="space-y-2">
                   <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
                     Email <span class="text-red-500">*</span>
@@ -86,7 +75,6 @@
                   <p v-if="errors.email" class="text-sm text-red-600">{{ errors.email }}</p>
                 </div>
 
-                <!-- Phone -->
                 <div class="space-y-2">
                   <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
                     Phone Number <span class="text-red-500">*</span>
@@ -107,7 +95,6 @@
                 </div>
               </div>
 
-              <!-- Optional Fields Section -->
               <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
                 <div>
                   <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-1" style="font-family: Inter, sans-serif;">
@@ -118,7 +105,6 @@
                   </p>
                 </div>
 
-                <!-- Professional Title -->
                 <div class="space-y-2">
                   <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
                     Professional Title
@@ -133,7 +119,6 @@
                   />
                 </div>
 
-                <!-- Location -->
                 <div class="space-y-2">
                   <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
                     Location
@@ -148,7 +133,6 @@
                   />
                 </div>
 
-                <!-- LinkedIn -->
                 <div class="space-y-2">
                   <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
                     LinkedIn URL
@@ -164,7 +148,6 @@
                   />
                 </div>
 
-                <!-- GitHub -->
                 <div class="space-y-2">
                   <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
                     GitHub URL
@@ -180,7 +163,6 @@
                   />
                 </div>
 
-                <!-- Portfolio -->
                 <div class="space-y-2">
                   <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
                     Portfolio URL
@@ -197,7 +179,6 @@
                 </div>
               </div>
 
-              <!-- Form Actions -->
               <div class="flex gap-3 pt-6">
                 <button
                   type="button"
@@ -228,7 +209,6 @@
               </div>
             </form>
 
-            <!-- Other Steps Placeholder -->
             <div v-else class="bg-white rounded-xl border border-gray-200 p-8 text-center">
               <h2 class="text-2xl font-bold text-gray-900 mb-2" style="font-family: Manrope, sans-serif;">
                 {{ currentStepLabel }}
@@ -255,14 +235,12 @@
           </div>
         </div>
 
-        <!-- Preview Panel (40% on desktop, hidden on tablet/mobile) -->
         <div class="hidden lg:flex lg:w-2/5 flex-col">
           <PreviewPanel :resume-data="resumeData" />
         </div>
       </div>
     </div>
 
-    <!-- Toast Notifications -->
     <Toast
       v-if="toast.show"
       :type="toast.type"
@@ -389,8 +367,9 @@ const handleSaveDraft = async () => {
 
   isSubmitting.value = true
   try {
-    await resumeApi.savePersonalDetails({
+    const response = await resumeApi.savePersonalDetails({
       fullName: form.value.fullName.trim(),
+      professionalTitle: form.value.title.trim() || null,
       email: form.value.email.trim(),
       phoneNumber: form.value.phone.trim(),
       location: form.value.location.trim() || null,
@@ -398,10 +377,26 @@ const handleSaveDraft = async () => {
       githubUrl: form.value.github.trim() || null,
       portfolioUrl: form.value.portfolio.trim() || null
     })
+    
+    localStorage.setItem("resumeId", response.data.resumeId)
+   
+    
     showToast('success', 'Draft saved successfully')
   } catch (error) {
-    showToast('error', error.message || 'Failed to save draft')
-  } finally {
+
+  if (error.data?.errors?.length) {
+    showToast(
+      'error',
+      error.data.errors.join('\n')
+    )
+  } else {
+    showToast(
+      'error',
+      error.message || 'Failed to save draft'
+    )
+  }
+
+} finally {
     isSubmitting.value = false
   }
 }
@@ -420,8 +415,9 @@ const handleNext = async () => {
 
   isSubmitting.value = true
   try {
-    await resumeApi.savePersonalDetails({
+    const response = await resumeApi.savePersonalDetails({
       fullName: form.value.fullName.trim(),
+      professionalTitle: form.value.title.trim() || null,
       email: form.value.email.trim(),
       phoneNumber: form.value.phone.trim(),
       location: form.value.location.trim() || null,
@@ -430,6 +426,9 @@ const handleNext = async () => {
       portfolioUrl: form.value.portfolio.trim() || null
     })
 
+    localStorage.setItem("resumeId", response.data.resumeId)
+    
+
     if (!completedSteps.value.includes(1)) {
       completedSteps.value.push(1)
     }
@@ -437,8 +436,20 @@ const handleNext = async () => {
     currentStep.value += 1
     showToast('success', 'Personal details saved')
   } catch (error) {
-    showToast('error', error.message || 'Failed to save')
-  } finally {
+
+  if (error.data?.errors?.length) {
+    showToast(
+      'error',
+      error.data.errors.join('\n')
+    )
+  } else {
+    showToast(
+      'error',
+      error.message || 'Failed to save'
+    )
+  }
+
+} finally {
     isSubmitting.value = false
   }
 }

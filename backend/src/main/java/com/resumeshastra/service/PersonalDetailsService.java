@@ -1,9 +1,10 @@
 package com.resumeshastra.service;
 
 import com.resumeshastra.dto.PersonalDetailsDTO;
+import com.resumeshastra.response.PersonalDetailsResponseDTO;
 
 public interface PersonalDetailsService {
 
-    String savePersonalDetails(PersonalDetailsDTO dto);
+    PersonalDetailsResponseDTO savePersonalDetails(PersonalDetailsDTO dto);
 
 }

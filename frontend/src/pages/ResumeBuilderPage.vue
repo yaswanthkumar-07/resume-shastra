@@ -1,150 +1,269 @@
 <!-- src/pages/ResumeBuilderPage.vue -->
 <template>
-  <div class="resume-builder">
-    <BuilderHeader @save="handleSavePersonalDetails" :loading="isSubmitting" />
-    
-    <div class="builder-content">
-      <Sidebar />
-      
-      <div class="builder-main">
-        <div class="form-container">
-          <h2 class="form-title">Personal Details</h2>
-          
-          <form @submit.prevent="handleSavePersonalDetails" class="form">
-            <!-- Full Name -->
-            <div class="form-group">
-              <label for="fullName" class="form-label">
-                Full Name <span class="required">*</span>
-              </label>
-              <input
-                id="fullName"
-                v-model="form.fullName"
-                type="text"
-                placeholder="John Doe"
-                class="form-input"
-                :disabled="isSubmitting"
-                @blur="validateField('fullName')"
-              />
-              <span v-if="errors.fullName" class="error-text">{{ errors.fullName }}</span>
-            </div>
+  <div class="flex flex-col h-screen bg-gray-50">
+    <!-- Header -->
+    <BuilderHeader
+      :current-step="currentStep"
+      :current-step-label="currentStepLabel"
+      :loading="isSubmitting"
+      @save="handleSaveDraft"
+      @export="handleExport"
+    />
 
-            <!-- Email -->
-            <div class="form-group">
-              <label for="email" class="form-label">
-                Email <span class="required">*</span>
-              </label>
-              <input
-                id="email"
-                v-model="form.email"
-                type="email"
-                placeholder="john@example.com"
-                class="form-input"
-                :disabled="isSubmitting"
-                @blur="validateField('email')"
-              />
-              <span v-if="errors.email" class="error-text">{{ errors.email }}</span>
-            </div>
+    <!-- Main Content -->
+    <div class="flex flex-1 overflow-hidden">
+      <!-- Sidebar -->
+      <Sidebar
+        :current-step="currentStep"
+        :completed-steps="completedSteps"
+        @navigate="navigateToStep"
+      />
 
-            <!-- Phone Number -->
-            <div class="form-group">
-              <label for="phoneNumber" class="form-label">Phone Number</label>
-              <input
-                id="phoneNumber"
-                v-model="form.phoneNumber"
-                type="tel"
-                placeholder="+1 (555) 000-0000"
-                class="form-input"
-                :disabled="isSubmitting"
-                @blur="validateField('phoneNumber')"
-              />
-              <span v-if="errors.phoneNumber" class="error-text">{{ errors.phoneNumber }}</span>
-            </div>
+      <!-- Builder + Preview Layout -->
+      <div class="flex-1 flex flex-col lg:flex-row gap-6 p-6 overflow-hidden">
+        <!-- Builder Form (60% on desktop) -->
+        <div class="flex-1 lg:w-3/5 overflow-y-auto">
+          <div class="max-w-2xl">
+            <!-- Step 1: Personal Details -->
+            <form
+              v-if="currentStep === 1"
+              @submit.prevent="handleNext"
+              class="space-y-6"
+            >
+              <!-- Section Title -->
+              <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2" style="font-family: Manrope, sans-serif;">
+                  Personal Details
+                </h2>
+                <p class="text-gray-600" style="font-family: Inter, sans-serif;">
+                  Help employers get to know you. All information is required unless marked optional.
+                </p>
+              </div>
 
-            <!-- Location -->
-            <div class="form-group">
-              <label for="location" class="form-label">Location</label>
-              <input
-                id="location"
-                v-model="form.location"
-                type="text"
-                placeholder="San Francisco, CA"
-                class="form-input"
-                :disabled="isSubmitting"
-              />
-            </div>
+              <!-- Required Fields Section -->
+              <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+                <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wide" style="font-family: Inter, sans-serif;">
+                  Required Information
+                </h3>
 
-            <!-- LinkedIn URL -->
-            <div class="form-group">
-              <label for="linkedinUrl" class="form-label">LinkedIn URL</label>
-              <input
-                id="linkedinUrl"
-                v-model="form.linkedinUrl"
-                type="url"
-                placeholder="https://linkedin.com/in/johndoe"
-                class="form-input"
-                :disabled="isSubmitting"
-                @blur="validateField('linkedinUrl')"
-              />
-              <span v-if="errors.linkedinUrl" class="error-text">{{ errors.linkedinUrl }}</span>
-            </div>
+                <!-- Full Name -->
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
+                    Full Name <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    v-model="form.fullName"
+                    type="text"
+                    placeholder="Yaswanth Kumar Kolla"
+                    @blur="validateField('fullName')"
+                    :disabled="isSubmitting"
+                    :class="[
+                      'w-full px-4 py-2 border rounded-lg transition-colors',
+                      errors.fullName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
+                    ]"
+                    style="font-family: Inter, sans-serif;"
+                  />
+                  <p v-if="errors.fullName" class="text-sm text-red-600">{{ errors.fullName }}</p>
+                </div>
 
-            <!-- GitHub URL -->
-            <div class="form-group">
-              <label for="githubUrl" class="form-label">GitHub URL</label>
-              <input
-                id="githubUrl"
-                v-model="form.githubUrl"
-                type="url"
-                placeholder="https://github.com/johndoe"
-                class="form-input"
-                :disabled="isSubmitting"
-                @blur="validateField('githubUrl')"
-              />
-              <span v-if="errors.githubUrl" class="error-text">{{ errors.githubUrl }}</span>
-            </div>
+                <!-- Email -->
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
+                    Email <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    v-model="form.email"
+                    type="email"
+                    placeholder="you@example.com"
+                    @blur="validateField('email')"
+                    :disabled="isSubmitting"
+                    :class="[
+                      'w-full px-4 py-2 border rounded-lg transition-colors',
+                      errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
+                    ]"
+                    style="font-family: Inter, sans-serif;"
+                  />
+                  <p v-if="errors.email" class="text-sm text-red-600">{{ errors.email }}</p>
+                </div>
 
-            <!-- Portfolio URL -->
-            <div class="form-group">
-              <label for="portfolioUrl" class="form-label">Portfolio URL</label>
-              <input
-                id="portfolioUrl"
-                v-model="form.portfolioUrl"
-                type="url"
-                placeholder="https://johndoe.com"
-                class="form-input"
-                :disabled="isSubmitting"
-                @blur="validateField('portfolioUrl')"
-              />
-              <span v-if="errors.portfolioUrl" class="error-text">{{ errors.portfolioUrl }}</span>
-            </div>
+                <!-- Phone -->
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
+                    Phone Number <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    v-model="form.phone"
+                    type="tel"
+                    placeholder="+1 (555) 000-0000"
+                    @blur="validateField('phone')"
+                    :disabled="isSubmitting"
+                    :class="[
+                      'w-full px-4 py-2 border rounded-lg transition-colors',
+                      errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white'
+                    ]"
+                    style="font-family: Inter, sans-serif;"
+                  />
+                  <p v-if="errors.phone" class="text-sm text-red-600">{{ errors.phone }}</p>
+                </div>
+              </div>
 
-            <!-- Form Actions -->
-            <div class="form-actions">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                :disabled="isSubmitting"
-              >
-                Previous
-              </button>
-              <button
-                type="submit"
-                class="btn btn-primary"
-                :disabled="!isFormValid || isSubmitting"
-              >
-                <span v-if="isSubmitting" class="btn-loader"></span>
-                <span>{{ isSubmitting ? 'Saving...' : 'Next' }}</span>
-              </button>
+              <!-- Optional Fields Section -->
+              <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+                <div>
+                  <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-1" style="font-family: Inter, sans-serif;">
+                    Optional Information
+                  </h3>
+                  <p class="text-sm text-gray-500" style="font-family: Inter, sans-serif;">
+                    Adding professional profiles helps recruiters know more about you, but you can always add them later.
+                  </p>
+                </div>
+
+                <!-- Professional Title -->
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
+                    Professional Title
+                  </label>
+                  <input
+                    v-model="form.title"
+                    type="text"
+                    placeholder="Backend Developer"
+                    :disabled="isSubmitting"
+                    class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg transition-colors"
+                    style="font-family: Inter, sans-serif;"
+                  />
+                </div>
+
+                <!-- Location -->
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
+                    Location
+                  </label>
+                  <input
+                    v-model="form.location"
+                    type="text"
+                    placeholder="San Francisco, CA"
+                    :disabled="isSubmitting"
+                    class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg transition-colors"
+                    style="font-family: Inter, sans-serif;"
+                  />
+                </div>
+
+                <!-- LinkedIn -->
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
+                    LinkedIn URL
+                  </label>
+                  <input
+                    v-model="form.linkedin"
+                    type="url"
+                    placeholder="linkedin.com/in/yaswanthkumar-07"
+                    @blur="validateField('linkedin')"
+                    :disabled="isSubmitting"
+                    class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg transition-colors"
+                    style="font-family: Inter, sans-serif;"
+                  />
+                </div>
+
+                <!-- GitHub -->
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
+                    GitHub URL
+                  </label>
+                  <input
+                    v-model="form.github"
+                    type="url"
+                    placeholder="github.com/yaswanthkumar-07"
+                    @blur="validateField('github')"
+                    :disabled="isSubmitting"
+                    class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg transition-colors"
+                    style="font-family: Inter, sans-serif;"
+                  />
+                </div>
+
+                <!-- Portfolio -->
+                <div class="space-y-2">
+                  <label class="block text-sm font-medium text-gray-900" style="font-family: Inter, sans-serif;">
+                    Portfolio URL
+                  </label>
+                  <input
+                    v-model="form.portfolio"
+                    type="url"
+                    placeholder="yourportfolio.com"
+                    @blur="validateField('portfolio')"
+                    :disabled="isSubmitting"
+                    class="w-full px-4 py-2 border border-gray-300 bg-white rounded-lg transition-colors"
+                    style="font-family: Inter, sans-serif;"
+                  />
+                </div>
+              </div>
+
+              <!-- Form Actions -->
+              <div class="flex gap-3 pt-6">
+                <button
+                  type="button"
+                  @click="handlePrevious"
+                  :disabled="isSubmitting"
+                  class="px-6 py-3 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  style="font-family: Inter, sans-serif;"
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  @click="handleSaveDraft"
+                  :disabled="isSubmitting"
+                  class="px-6 py-3 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  style="font-family: Inter, sans-serif;"
+                >
+                  Save Draft
+                </button>
+                <button
+                  type="submit"
+                  :disabled="!isFormValid || isSubmitting"
+                  class="flex-1 px-6 py-3 rounded-lg font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  style="background-color: #B00149;"
+                >
+                  {{ isSubmitting ? 'Saving...' : 'Continue' }}
+                </button>
+              </div>
+            </form>
+
+            <!-- Other Steps Placeholder -->
+            <div v-else class="bg-white rounded-xl border border-gray-200 p-8 text-center">
+              <h2 class="text-2xl font-bold text-gray-900 mb-2" style="font-family: Manrope, sans-serif;">
+                {{ currentStepLabel }}
+              </h2>
+              <p class="text-gray-600 mb-6">Coming soon</p>
+              <div class="flex gap-3 justify-center">
+                <button
+                  @click="navigateToStep(currentStep - 1)"
+                  class="px-6 py-3 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                  style="font-family: Inter, sans-serif;"
+                >
+                  Previous
+                </button>
+                <button
+                  @click="navigateToStep(currentStep + 1)"
+                  v-if="currentStep < 5"
+                  class="px-6 py-3 rounded-lg font-medium text-white transition-colors"
+                  style="background-color: #B00149;"
+                >
+                  Next
+                </button>
+              </div>
             </div>
-          </form>
+          </div>
         </div>
 
-        <PreviewPanel />
+        <!-- Preview Panel (40% on desktop, hidden on tablet/mobile) -->
+        <div class="hidden lg:flex lg:w-2/5 flex-col">
+          <PreviewPanel :resume-data="resumeData" />
+        </div>
       </div>
     </div>
 
-    <!-- Toast Notification -->
-    <Toast 
+    <!-- Toast Notifications -->
+    <Toast
       v-if="toast.show"
       :type="toast.type"
       :message="toast.message"
@@ -156,37 +275,54 @@
 <script setup>
 import { ref, computed } from 'vue'
 import BuilderHeader from '../components/BuilderHeader.vue'
-import Sidebar from '../components/Sidebar.vue'
 import PreviewPanel from '../components/PreviewPanel.vue'
+import Sidebar from '../components/Sidebar.vue'
 import Toast from '../components/Toast.vue'
 import { resumeApi } from '../services/api'
 
+const currentStep = ref(1)
 const isSubmitting = ref(false)
+const completedSteps = ref([])
 
 const form = ref({
   fullName: '',
   email: '',
-  phoneNumber: '',
+  phone: '',
+  title: '',
   location: '',
-  linkedinUrl: '',
-  githubUrl: '',
-  portfolioUrl: ''
+  linkedin: '',
+  github: '',
+  portfolio: ''
 })
 
 const errors = ref({
   fullName: '',
   email: '',
-  phoneNumber: '',
-  location: '',
-  linkedinUrl: '',
-  githubUrl: '',
-  portfolioUrl: ''
+  phone: '',
+  linkedin: '',
+  github: '',
+  portfolio: ''
 })
 
 const toast = ref({
   show: false,
   type: 'success',
   message: ''
+})
+
+const resumeData = computed(() => ({
+  fullName: form.value.fullName,
+  email: form.value.email,
+  phoneNumber: form.value.phone,
+  location: form.value.location,
+  linkedinUrl: form.value.linkedin,
+  githubUrl: form.value.github,
+  portfolioUrl: form.value.portfolio
+}))
+
+const currentStepLabel = computed(() => {
+  const labels = ['Personal Details', 'Professional Summary', 'Education + Skills', 'Projects + Experience', 'Review']
+  return labels[currentStep.value - 1]
 })
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -197,290 +333,148 @@ const validateField = (field) => {
   const value = form.value[field]
 
   if (field === 'fullName') {
-    if (!value || value.trim().length === 0) {
-      errors.value.fullName = 'Full name is required'
-    } else if (value.trim().length < 2) {
-      errors.value.fullName = 'Please enter a valid name'
-    } else {
-      errors.value.fullName = ''
-    }
+    errors.value.fullName = !value || value.trim().length < 2 ? 'Please enter a valid name' : ''
   }
 
   if (field === 'email') {
-    if (!value || value.trim().length === 0) {
-      errors.value.email = 'Email is required'
-    } else if (!emailRegex.test(value)) {
-      errors.value.email = 'Please enter a valid email address'
-    } else {
-      errors.value.email = ''
-    }
+    errors.value.email = !value || !emailRegex.test(value) ? 'Please enter a valid email' : ''
   }
 
-  if (field === 'phoneNumber') {
-    if (value && !phoneRegex.test(value)) {
-      errors.value.phoneNumber = 'Please enter a valid phone number'
-    } else {
-      errors.value.phoneNumber = ''
-    }
+  if (field === 'phone') {
+    errors.value.phone = value && !phoneRegex.test(value) ? 'Please enter a valid phone number' : ''
   }
 
-  if (field === 'linkedinUrl') {
-    if (value && !urlRegex.test(value)) {
-      errors.value.linkedinUrl = 'Please enter a valid LinkedIn URL'
-    } else {
-      errors.value.linkedinUrl = ''
-    }
+  if (field === 'linkedin') {
+    errors.value.linkedin = value && !urlRegex.test(value) ? 'Please enter a valid URL' : ''
   }
 
-  if (field === 'githubUrl') {
-    if (value && !urlRegex.test(value)) {
-      errors.value.githubUrl = 'Please enter a valid GitHub URL'
-    } else {
-      errors.value.githubUrl = ''
-    }
+  if (field === 'github') {
+    errors.value.github = value && !urlRegex.test(value) ? 'Please enter a valid URL' : ''
   }
 
-  if (field === 'portfolioUrl') {
-    if (value && !urlRegex.test(value)) {
-      errors.value.portfolioUrl = 'Please enter a valid portfolio URL'
-    } else {
-      errors.value.portfolioUrl = ''
-    }
+  if (field === 'portfolio') {
+    errors.value.portfolio = value && !urlRegex.test(value) ? 'Please enter a valid URL' : ''
   }
 }
 
 const isFormValid = computed(() => {
-  const requiredFieldsValid = 
-    form.value.fullName.trim() !== '' &&
+  return form.value.fullName.trim() !== '' &&
     form.value.email.trim() !== '' &&
     emailRegex.test(form.value.email) &&
+    form.value.phone.trim() !== '' &&
+    phoneRegex.test(form.value.phone) &&
     !errors.value.fullName &&
-    !errors.value.email
-
-  const noErrors = 
-    !errors.value.phoneNumber &&
-    !errors.value.linkedinUrl &&
-    !errors.value.githubUrl &&
-    !errors.value.portfolioUrl
-
-  return requiredFieldsValid && noErrors
+    !errors.value.email &&
+    !errors.value.phone &&
+    !errors.value.linkedin &&
+    !errors.value.github &&
+    !errors.value.portfolio
 })
 
 const showToast = (type, message) => {
-  toast.value = {
-    show: true,
-    type,
-    message
-  }
+  toast.value = { show: true, type, message }
 }
 
-const handleSavePersonalDetails = async () => {
+const handleSaveDraft = async () => {
   Object.keys(form.value).forEach(field => {
-    validateField(field)
+    if (['fullName', 'email', 'phone', 'linkedin', 'github', 'portfolio'].includes(field)) {
+      validateField(field)
+    }
   })
 
   if (!isFormValid.value) {
+    showToast('error', 'Please fix the errors above')
     return
   }
 
   isSubmitting.value = true
   try {
-    const payload = {
+    await resumeApi.savePersonalDetails({
       fullName: form.value.fullName.trim(),
       email: form.value.email.trim(),
-      phoneNumber: form.value.phoneNumber.trim() || null,
+      phoneNumber: form.value.phone.trim(),
       location: form.value.location.trim() || null,
-      linkedinUrl: form.value.linkedinUrl.trim() || null,
-      githubUrl: form.value.githubUrl.trim() || null,
-      portfolioUrl: form.value.portfolioUrl.trim() || null
-    }
-
-    await resumeApi.savePersonalDetails(payload)
-    showToast('success', 'Personal details saved successfully')
+      linkedinUrl: form.value.linkedin.trim() || null,
+      githubUrl: form.value.github.trim() || null,
+      portfolioUrl: form.value.portfolio.trim() || null
+    })
+    showToast('success', 'Draft saved successfully')
   } catch (error) {
-    showToast('error', error.message || 'Failed to save personal details')
+    showToast('error', error.message || 'Failed to save draft')
   } finally {
     isSubmitting.value = false
+  }
+}
+
+const handleNext = async () => {
+  Object.keys(form.value).forEach(field => {
+    if (['fullName', 'email', 'phone', 'linkedin', 'github', 'portfolio'].includes(field)) {
+      validateField(field)
+    }
+  })
+
+  if (!isFormValid.value) {
+    showToast('error', 'Please fill in all required fields correctly')
+    return
+  }
+
+  isSubmitting.value = true
+  try {
+    await resumeApi.savePersonalDetails({
+      fullName: form.value.fullName.trim(),
+      email: form.value.email.trim(),
+      phoneNumber: form.value.phone.trim(),
+      location: form.value.location.trim() || null,
+      linkedinUrl: form.value.linkedin.trim() || null,
+      githubUrl: form.value.github.trim() || null,
+      portfolioUrl: form.value.portfolio.trim() || null
+    })
+
+    if (!completedSteps.value.includes(1)) {
+      completedSteps.value.push(1)
+    }
+
+    currentStep.value += 1
+    showToast('success', 'Personal details saved')
+  } catch (error) {
+    showToast('error', error.message || 'Failed to save')
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+const handlePrevious = () => {
+  if (currentStep.value > 1) {
+    currentStep.value -= 1
+  }
+}
+
+const handleExport = () => {
+  showToast('info', 'Export feature coming soon')
+}
+
+const navigateToStep = (step) => {
+  if (step >= 1 && step <= 5) {
+    currentStep.value = step
   }
 }
 </script>
 
 <style scoped>
-.resume-builder {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background: #f9fafb;
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-.builder-content {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.builder-main {
-  flex: 1;
-  display: flex;
-  gap: 24px;
-  padding: 32px;
-  overflow-y: auto;
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 4px;
 }
 
-.form-container {
-  flex: 1;
-  background: white;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  padding: 32px;
-  max-width: 600px;
-}
-
-.form-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 32px;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: #111827;
-}
-
-.required {
-  color: #ef4444;
-}
-
-.form-input {
-  padding: 12px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font-size: 16px;
-  font-family: inherit;
-  transition: all 0.2s ease;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.form-input:disabled {
-  background: #f3f4f6;
-  color: #9ca3af;
-  cursor: not-allowed;
-}
-
-.error-text {
-  font-size: 13px;
-  color: #ef4444;
-}
-
-.form-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #e5e7eb;
-}
-
-.btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  background: #3b82f6;
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #2563eb;
-}
-
-.btn-secondary {
-  background: #e5e7eb;
-  color: #111827;
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: #d1d5db;
-}
-
-.btn-loader {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (max-width: 1024px) {
-  .builder-main {
-    flex-direction: column;
-    gap: 16px;
-    padding: 24px;
-  }
-
-  .form-container {
-    max-width: none;
-  }
-}
-
-@media (max-width: 640px) {
-  .builder-main {
-    padding: 16px;
-    gap: 12px;
-  }
-
-  .form-container {
-    padding: 20px;
-  }
-
-  .form-title {
-    font-size: 20px;
-    margin-bottom: 24px;
-  }
-
-  .form {
-    gap: 16px;
-  }
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
 }
 </style>

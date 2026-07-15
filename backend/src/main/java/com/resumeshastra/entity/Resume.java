@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "resumes")
 @Getter
@@ -36,6 +39,22 @@ public class Resume {
     private String portfolioUrl;
 
     private String location;
+
+    @OneToMany(
+            mappedBy = "resume",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Builder.Default
+    private List<Education> educations = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "resume",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Builder.Default
+    private List<Skill> skills = new ArrayList<>();
 
     @CreationTimestamp
     private LocalDateTime createdAt;

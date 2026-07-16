@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SkillResponseDTO {
+public class CertificationResponseDTO {
 
-    private Long skillId;
+    private Long certificationId;
 
 }

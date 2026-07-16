@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SkillResponseDTO {
+public class ExperienceResponseDTO {
 
-    private Long skillId;
+    private Long experienceId;
 
 }

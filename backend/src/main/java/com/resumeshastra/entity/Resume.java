@@ -2,12 +2,10 @@ package com.resumeshastra.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
-
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +53,29 @@ public class Resume {
     )
     @Builder.Default
     private List<Skill> skills = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "resume", 
+            cascade = CascadeType.ALL, 
+            orphanRemoval = true)
+    @Builder.Default    
+    private List<Certification> certifications = new ArrayList<>();
+    
+    @OneToMany(
+            mappedBy = "resume", 
+            cascade = CascadeType.ALL, 
+            orphanRemoval = true
+    )
+    @Builder.Default
+    private List<Experience> experiences = new ArrayList<>();
+    
+    @OneToMany(
+            mappedBy = "resume",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @Builder.Default
+    private List<Project> projects = new ArrayList<>();
 
     @CreationTimestamp
     private LocalDateTime createdAt;

@@ -15,6 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "https://resumeshastra.pages.dev"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
-                .allowedHeaders("*");
+                .allowedHeaders("*")
+                .maxAge(3600);
     }
 }

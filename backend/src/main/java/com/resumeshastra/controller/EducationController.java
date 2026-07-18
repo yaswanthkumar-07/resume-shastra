@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/resumes/{resumeId}/education")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class EducationController {
 
     private final EducationService educationService;

@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/resumes/{resumeId}/certifications")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
+
 public class CertificationController {
 
     private final CertificationService certificationService;

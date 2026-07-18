@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:5173")
+
 @RestController
 public class HealthController {
 

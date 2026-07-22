@@ -20,10 +20,6 @@ public class ExperienceDTO {
 
     private String location;
 
-    @NotBlank(message = "Start date is required")
-    private String startDate;
-
-    private String endDate;
 
     private Boolean currentlyWorking;
 

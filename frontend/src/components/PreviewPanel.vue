@@ -1,8 +1,11 @@
+<!-- src/components/PreviewPanel.vue -->
 <template>
   <div class="preview-panel">
     <div class="hidden md:flex flex-col bg-white rounded-xl shadow-sm border border-gray-200 h-full overflow-hidden">
       <div class="flex-1 overflow-y-auto">
         <div class="w-full max-w-2xl mx-auto px-6 py-8">
+          
+          <!-- Header / Contact Info -->
           <div class="mb-6 pb-6 border-b border-gray-200">
             <h1 v-if="resumeData.fullName" class="text-2xl font-bold text-gray-900 mb-1" style="font-family: 'IBM Plex Sans', sans-serif;">
               {{ resumeData.fullName }}
@@ -26,13 +29,14 @@
               </a>
             </div>
 
-            <div v-else class="space-y-2">
+            <div v-else class="space-y-2 mt-2">
               <div class="h-4 bg-gray-100 rounded w-3/4"></div>
               <div class="h-3 bg-gray-100 rounded w-full"></div>
               <div class="h-3 bg-gray-100 rounded w-2/3"></div>
             </div>
           </div>
 
+          <!-- Professional Summary -->
           <div v-if="resumeData.summary" class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-2" style="font-family: 'IBM Plex Sans', sans-serif;">Professional Summary</h2>
             <p class="text-sm text-gray-700 leading-relaxed" style="font-family: 'IBM Plex Sans', sans-serif;">
@@ -40,6 +44,7 @@
             </p>
           </div>
 
+          <!-- Experience -->
           <div v-if="resumeData.experience && resumeData.experience.length > 0" class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3" style="font-family: 'IBM Plex Sans', sans-serif;">Experience</h2>
             <div class="space-y-4">
@@ -56,33 +61,40 @@
             </div>
           </div>
 
+          <!-- Education -->
           <div v-if="resumeData.education && resumeData.education.length > 0" class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3" style="font-family: 'IBM Plex Sans', sans-serif;">Education</h2>
             <div class="space-y-3">
               <div v-for="edu in resumeData.education" :key="edu.id" class="text-sm">
                 <div class="flex justify-between items-start mb-1">
-                  <h3 class="font-semibold text-gray-900" style="font-family: 'IBM Plex Sans', sans-serif;">{{ edu.degree }}</h3>
-                  <span v-if="edu.year" class="text-gray-600" style="font-family: 'IBM Plex Sans', sans-serif;">{{ edu.year }}</span>
+                  <h3 class="font-semibold text-gray-900" style="font-family: 'IBM Plex Sans', sans-serif;">
+                    {{ edu.degree || edu.customDegree || edu.educationLevel }} 
+                    <span v-if="edu.branch || edu.major">in {{ edu.branch || edu.major }}</span>
+                  </h3>
+                  <span v-if="edu.startYear" class="text-gray-600" style="font-family: 'IBM Plex Sans', sans-serif;">
+                    {{ edu.startYear }} - {{ edu.currentlyStudying ? 'Present' : edu.endYear }}
+                  </span>
                 </div>
                 <p class="text-gray-600" style="font-family: 'IBM Plex Sans', sans-serif;">{{ edu.institution }}</p>
+                <p v-if="edu.score" class="text-gray-500 text-xs mt-1" style="font-family: 'IBM Plex Sans', sans-serif;">
+                  {{ edu.scoreType }}: {{ edu.score }}
+                </p>
               </div>
             </div>
           </div>
 
+          <!-- Skills (FIXED: Formats groups correctly) -->
           <div v-if="resumeData.skills && resumeData.skills.length > 0" class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3" style="font-family: 'IBM Plex Sans', sans-serif;">Skills</h2>
-            <div class="flex flex-wrap gap-2">
-              <span
-                v-for="(skill, idx) in resumeData.skills"
-                :key="idx"
-                class="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded text-sm"
-                style="font-family: 'IBM Plex Sans', sans-serif;"
-              >
-                {{ skill }}
-              </span>
+            <div class="space-y-2">
+              <div v-for="(skillGroup, idx) in resumeData.skills" :key="idx" class="text-sm">
+                <span class="font-semibold text-gray-900" style="font-family: 'IBM Plex Sans', sans-serif;">{{ skillGroup.category }}: </span>
+                <span class="text-gray-700" style="font-family: 'IBM Plex Sans', sans-serif;">{{ skillGroup.skills.join(', ') }}</span>
+              </div>
             </div>
           </div>
 
+          <!-- Projects -->
           <div v-if="resumeData.projects && resumeData.projects.length > 0" class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3" style="font-family: 'IBM Plex Sans', sans-serif;">Projects</h2>
             <div class="space-y-4">
@@ -95,6 +107,7 @@
             </div>
           </div>
 
+          <!-- Certifications -->
           <div v-if="resumeData.certifications && resumeData.certifications.length > 0" class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-3" style="font-family: 'IBM Plex Sans', sans-serif;">Certifications</h2>
             <div class="space-y-2">
@@ -116,6 +129,7 @@
       </div>
     </div>
 
+    <!-- Mobile Preview Button & Modal -->
     <div class="md:hidden">
       <button
         @click="isPreviewOpen = true"
@@ -152,10 +166,34 @@
                 Your Name
               </p>
 
-              <div v-if="hasContactInfo" class="space-y-1 text-sm text-gray-600 mb-6 pb-6 border-b border-gray-200">
-                <p v-if="resumeData.email">{{ resumeData.email }}</p>
-                <p v-if="resumeData.phoneNumber">{{ resumeData.phoneNumber }}</p>
-                <p v-if="resumeData.location">{{ resumeData.location }}</p>
+              <div v-if="hasContactInfo" class="flex flex-wrap gap-3 text-sm text-gray-600 mb-6 pb-6 border-b border-gray-200">
+                <span v-if="resumeData.email">{{ resumeData.email }}</span>
+                <span v-if="resumeData.phoneNumber">{{ resumeData.phoneNumber }}</span>
+                <span v-if="resumeData.location">{{ resumeData.location }}</span>
+              </div>
+
+              <!-- Added Missing Mobile Sections -->
+              <div v-if="resumeData.summary" class="mb-6 pb-6 border-b border-gray-100">
+                <h2 class="text-md font-semibold text-gray-900 mb-2">Professional Summary</h2>
+                <p class="text-sm text-gray-700">{{ resumeData.summary }}</p>
+              </div>
+
+              <div v-if="resumeData.education && resumeData.education.length > 0" class="mb-6 pb-6 border-b border-gray-100">
+                <h2 class="text-md font-semibold text-gray-900 mb-3">Education</h2>
+                <div v-for="edu in resumeData.education" :key="edu.id" class="mb-3 text-sm">
+                  <h3 class="font-semibold text-gray-900">{{ edu.degree || edu.educationLevel }}</h3>
+                  <p class="text-gray-600">{{ edu.institution }}</p>
+                </div>
+              </div>
+
+              <div v-if="resumeData.skills && resumeData.skills.length > 0" class="mb-6">
+                <h2 class="text-md font-semibold text-gray-900 mb-3">Skills</h2>
+                <div class="space-y-2">
+                  <div v-for="(skillGroup, idx) in resumeData.skills" :key="idx" class="text-sm">
+                    <span class="font-semibold text-gray-900">{{ skillGroup.category }}: </span>
+                    <span class="text-gray-700">{{ skillGroup.skills.join(', ') }}</span>
+                  </div>
+                </div>
               </div>
 
               <p v-if="isEmpty" class="text-gray-500 text-center py-8">Your resume preview will appear here</p>

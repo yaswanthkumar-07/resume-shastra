@@ -10,35 +10,78 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/resumes/{resumeId}/certifications")
+@RequestMapping("/api/certifications")
 @RequiredArgsConstructor
-
 public class CertificationController {
 
     private final CertificationService certificationService;
 
-    @PostMapping
+    @PostMapping("/{resumeId}")
     public ResponseEntity<ApiResponse<CertificationResponseDTO>> saveCertification(
             @PathVariable Long resumeId,
             @Valid @RequestBody CertificationDTO dto) {
 
-        Long certificationId = certificationService.saveCertification(resumeId, dto);
+        CertificationResponseDTO response = certificationService.saveCertification(resumeId, dto);
 
-        CertificationResponseDTO result = CertificationResponseDTO.builder()
-                .certificationId(certificationId)
-                .build();
-
-        ApiResponse<CertificationResponseDTO> response =
+        return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<CertificationResponseDTO>builder()
-                        .status("SUCCESS")
+                        .status("SUCCESS") // Updated to String
                         .message("Certification saved successfully")
-                        .data(result)
-                        .errors(List.of())
-                        .build();
+                        .data(response)
+                        .errors(Collections.emptyList())
+                        .build()
+        );
+    }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    @GetMapping("/{resumeId}")
+    public ResponseEntity<ApiResponse<List<CertificationResponseDTO>>> getCertifications(
+            @PathVariable Long resumeId) {
+
+        List<CertificationResponseDTO> response = certificationService.getCertifications(resumeId);
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<CertificationResponseDTO>>builder()
+                        .status("SUCCESS") // Updated to String
+                        .message("Certifications fetched successfully")
+                        .data(response)
+                        .errors(Collections.emptyList())
+                        .build()
+        );
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<CertificationResponseDTO>> updateCertification(
+            @PathVariable Long id,
+            @Valid @RequestBody CertificationDTO dto) {
+
+        CertificationResponseDTO response = certificationService.updateCertification(id, dto);
+
+        return ResponseEntity.ok(
+                ApiResponse.<CertificationResponseDTO>builder()
+                        .status("SUCCESS") // Updated to String
+                        .message("Certification updated successfully")
+                        .data(response)
+                        .errors(Collections.emptyList())
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteCertification(@PathVariable Long id) {
+        
+        certificationService.deleteCertification(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .status("SUCCESS") // Updated to String
+                        .message("Certification deleted successfully")
+                        .data(null)
+                        .errors(Collections.emptyList())
+                        .build()
+        );
     }
 }

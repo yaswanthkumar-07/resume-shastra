@@ -5,19 +5,26 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CertificationResponseDTO {
+public class AchievementResponseDTO {
 
     private Long id;
+
     private Long resumeId;
-    private String certificationName;
-    private String issuingOrganization;
-    private String issueDate;
-    private String expiryDate;
-    private String credentialId;
-    private String credentialUrl;
+
+    private String title;
+
+    private String organization;
+
+    private LocalDate achievementDate;
+
+    private String description;
+
     private Integer displayOrder;
+
 }

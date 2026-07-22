@@ -9,28 +9,56 @@ import lombok.*;
 @Builder
 public class EducationDTO {
 
+    @NotBlank(message = "Education level is required")
+    @Size(max = 50)
+    private String educationLevel;
+
+    @Size(max = 50)
+    private String customEducationLevel;
+
     @NotBlank(message = "Degree is required")
-    @Size(max = 100, message = "Degree cannot exceed 100 characters")
+    @Size(max = 100)
     private String degree;
 
+    @Size(max = 100)
+    private String customDegree;
+
+    @Size(max = 100)
+    private String branch;
+
+    @Size(max = 100)
+    private String major;
+
+    @Size(max = 100)
+    private String minor;
+
+    @Size(max = 100)
+    private String specialization;
+
     @NotBlank(message = "Institution is required")
-    @Size(max = 150, message = "Institution cannot exceed 150 characters")
+    @Size(max = 150)
     private String institution;
 
-    @Size(max = 100, message = "Field of study cannot exceed 100 characters")
-    private String fieldOfStudy;
+    @Size(max = 150)
+    private String universityBoard;
 
-    @DecimalMin(value = "0.0", message = "CGPA cannot be negative")
-    @DecimalMax(value = "10.0", message = "CGPA cannot be greater than 10")
-    private Double cgpa;
+    @NotBlank(message = "Score type is required")
+    private String scoreType;
 
-    private String startDate;
+    @DecimalMin(value = "0.0", message = "Score cannot be less than 0")
+    @DecimalMax(value = "100.0", message = "Score cannot be greater than 100")
+    private Double score;
 
-    private String endDate;
+    private String startMonth;
+
+    private Integer startYear;
+
+    private String endMonth;
+
+    private Integer endYear;
 
     private Boolean currentlyStudying;
 
-    @Size(max = 1000, message = "Description cannot exceed 1000 characters")
     private String description;
 
     private Integer displayOrder;

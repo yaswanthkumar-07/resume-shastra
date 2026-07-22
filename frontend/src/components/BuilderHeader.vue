@@ -1,10 +1,10 @@
 <!-- src/components/BuilderHeader.vue -->
 <template>
   <header class="sticky top-0 z-40 bg-white border-b border-gray-200">
-    <div class="px-6 py-4">
+    <div class="px-6 py-2">
       <div class="flex items-center justify-between gap-6 mb-4">
         <div class="flex items-center gap-2">
-          <div class="w-10 h-10 bg-gradient-to-br from-red-600 to-red-700 rounded-lg flex items-center justify-center">
+          <div class="w-7 h-7 bg-gradient-to-br from-red-600 to-red-700 rounded-lg flex items-center justify-center">
             <span class="text-white font-bold text-lg">R</span>
           </div>
           <div>

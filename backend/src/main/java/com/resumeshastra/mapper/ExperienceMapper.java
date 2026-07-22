@@ -2,6 +2,7 @@ package com.resumeshastra.mapper;
 
 import com.resumeshastra.dto.ExperienceDTO;
 import com.resumeshastra.entity.Experience;
+import com.resumeshastra.response.ExperienceResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,6 +26,22 @@ public class ExperienceMapper {
     public ExperienceDTO entityToDto(Experience experience) {
 
         return ExperienceDTO.builder()
+                .companyName(experience.getCompanyName())
+                .jobTitle(experience.getJobTitle())
+                .employmentType(experience.getEmploymentType())
+                .location(experience.getLocation())
+                .startDate(experience.getStartDate())
+                .endDate(experience.getEndDate())
+                .currentlyWorking(experience.getCurrentlyWorking())
+                .description(experience.getDescription())
+                .displayOrder(experience.getDisplayOrder())
+                .build();
+    }
+
+    public ExperienceResponseDTO entityToResponse(Experience experience) {
+
+        return ExperienceResponseDTO.builder()
+                .id(experience.getId())
                 .companyName(experience.getCompanyName())
                 .jobTitle(experience.getJobTitle())
                 .employmentType(experience.getEmploymentType())

@@ -15,24 +15,24 @@
         @navigate="navigateToStep"
       />
 
-      <div class="flex-1 flex flex-col lg:flex-row gap-6 p-6 overflow-hidden">
-        <div class="flex-1 lg:w-3/5 overflow-y-auto">
-          <div class="max-w-2xl">
+      <div class="flex-1 flex flex-col lg:flex-row gap-4 p-4 overflow-hidden">
+        <div class="lg:w-[52%] overflow-y-auto">
+          <div class="max-w-4xl">
             <form
               v-if="currentStep === 1"
               @submit.prevent="handleNext"
               class="space-y-6"
             >
-              <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-2" style="font-family: Manrope, sans-serif;">
-                  Personal Details
-                </h2>
+              <div class="mb-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-2" style="font-family: Manrope, sans-serif;">
+                    Personal Details
+                   </h2>
                 <p class="text-gray-600" style="font-family: Inter, sans-serif;">
                   Help employers get to know you. All information is required unless marked optional.
                 </p>
               </div>
 
-              <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+              <div class="bg-white rounded-xl border border-gray-200 p-5 space-y-5">
                 <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wide" style="font-family: Inter, sans-serif;">
                   Required Information
                 </h3>
@@ -95,7 +95,7 @@
                 </div>
               </div>
 
-              <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+              <div class="bg-white rounded-xl border border-gray-200 p-5 space-y-5">
                 <div>
                   <h3 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-1" style="font-family: Inter, sans-serif;">
                     Optional Information
@@ -184,7 +184,7 @@
                   type="button"
                   @click="handlePrevious"
                   :disabled="isSubmitting"
-                  class="px-6 py-3 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="px-5 py-2.5 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   style="font-family: Inter, sans-serif;"
                 >
                   Previous
@@ -209,33 +209,163 @@
               </div>
             </form>
 
-            <div v-else class="bg-white rounded-xl border border-gray-200 p-8 text-center">
-              <h2 class="text-2xl font-bold text-gray-900 mb-2" style="font-family: Manrope, sans-serif;">
-                {{ currentStepLabel }}
-              </h2>
-              <p class="text-gray-600 mb-6">Coming soon</p>
-              <div class="flex gap-3 justify-center">
-                <button
-                  @click="navigateToStep(currentStep - 1)"
-                  class="px-6 py-3 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+            <div
+              v-else-if="currentStep === 2"
+              class="space-y-6"
+            >
+              <div>
+                <h2
+                  class="text-xl font-bold text-gray-900 mb-2"
+                  style="font-family: Manrope, sans-serif;"
+                >
+                  Professional Summary
+                </h2>
+                <p
+                  class="text-gray-600"
                   style="font-family: Inter, sans-serif;"
+                >
+                  Choose a professional summary template or write your own.
+                </p>
+              </div>
+
+              <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+                <div>
+                  <label class="block text-sm font-medium mb-2">
+                    Career Category
+                  </label>
+                  <select
+                    v-model="summaryCategory"
+                    @change="loadTemplates"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                  >
+                    <option value="">Select Category</option>
+                    <option value="IT">IT</option>
+                    <option value="Commerce">Commerce</option>
+                    <option value="BBA">BBA</option>
+                    <option value="Science">Science</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Education">Education</option>
+                    <option value="GENERAL">General</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-2">
+                    Template
+                  </label>
+                  <select
+                    v-model="selectedTemplateId"
+                    @change="applyTemplate"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                  >
+                    <option value="">Select Template</option>
+                    <option
+                      v-for="template in summaryTemplates"
+                      :key="template.id"
+                      :value="template.id"
+                    >
+                      {{ template.title }}
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-2">
+                    Professional Summary
+                  </label>
+                  <textarea
+                    v-model="summary"
+                    rows="7"
+                    class="w-full border border-gray-300 rounded-lg px-4 py-3 resize-none"
+                    placeholder="Write your professional summary..."
+                  ></textarea>
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <button
+                  @click="handlePrevious"
+                  class="px-6 py-3 bg-gray-100 rounded-lg"
                 >
                   Previous
                 </button>
                 <button
-                  @click="navigateToStep(currentStep + 1)"
-                  v-if="currentStep < 5"
-                  class="px-6 py-3 rounded-lg font-medium text-white transition-colors"
-                  style="background-color: #B00149;"
+                  @click="handleSummaryNext"
+                  :disabled="isSubmitting"
+                  class="flex-1 px-6 py-3 rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  style="background:#B00149"
                 >
-                  Next
+                  {{ isSubmitting ? "Saving..." : "Continue" }}
                 </button>
               </div>
             </div>
+
+            <!-- STEP 3: Education and Skills Section -->
+            <div v-else-if="currentStep === 3" class="space-y-6">
+              <EducationAndSkillsSection
+                @educationUpdated="educationList = $event"
+                @skillsUpdated="skillsList = $event"
+                @previous="handlePrevious"
+                @next="currentStep = 4"
+              />
+            </div>
+
+            <!-- ADDED: STEP 4: Projects & Experience Placeholder -->
+            <div v-else-if="currentStep === 4" class="space-y-6">
+              <div>
+                <h2 class="text-xl font-bold text-gray-900 mb-2" style="font-family: Manrope, sans-serif;">
+                  Projects & Experience
+                </h2>
+                <p class="text-gray-600" style="font-family: Inter, sans-serif;">
+                  Add your work experience and key projects here.
+                </p>
+              </div>
+
+              <!-- We will replace this with your actual component later -->
+              <div class="bg-white rounded-xl border border-gray-200 p-10 text-center">
+                 <p class="text-gray-500">Component coming soon...</p>
+              </div>
+
+              <!-- Navigation Buttons for now -->
+              <div class="mt-8 flex gap-3 border-t pt-6">
+                <button
+                  @click="handlePrevious"
+                  class="rounded-lg bg-gray-100 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-200"
+                >
+                  Previous
+                </button>
+                <button
+                  @click="currentStep = 5"
+                  class="flex-1 rounded-lg text-white font-medium transition-colors disabled:opacity-50"
+                  style="background:#B00149"
+                >
+                  Continue to Review
+                </button>
+              </div>
+            </div>
+
+            <!-- ADDED: STEP 5: Review Placeholder -->
+            <div v-else-if="currentStep === 5" class="space-y-6">
+              <h2 class="text-xl font-bold text-gray-900 mb-2" style="font-family: Manrope, sans-serif;">
+                Review Your Resume
+              </h2>
+              <p>Looks great! Ready to export?</p>
+              
+              <div class="mt-8 flex gap-3 border-t pt-6">
+                <button @click="handlePrevious" class="rounded-lg bg-gray-100 px-6 py-3 font-medium text-gray-700 transition-colors hover:bg-gray-200">
+                  Previous
+                </button>
+                <button @click="handleExport" class="flex-1 rounded-lg text-white font-medium transition-colors" style="background:#B00149">
+                  Export Resume
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
 
-        <div class="hidden lg:flex lg:w-2/5 flex-col">
+        <div class="hidden lg:flex lg:w-[48%] flex-col">
           <PreviewPanel :resume-data="resumeData" />
         </div>
       </div>
@@ -256,11 +386,18 @@ import BuilderHeader from '../components/BuilderHeader.vue'
 import PreviewPanel from '../components/PreviewPanel.vue'
 import Sidebar from '../components/Sidebar.vue'
 import Toast from '../components/Toast.vue'
+import EducationAndSkillsSection from '../components/EducationAndSkillsSection.vue' 
 import { resumeApi } from '../services/api'
 
 const currentStep = ref(1)
 const isSubmitting = ref(false)
 const completedSteps = ref([])
+const summaryCategory = ref('')
+const summaryTemplates = ref([])
+const selectedTemplateId = ref('')
+const summary = ref('')
+const educationList = ref([]) 
+const skillsList = ref([]) 
 
 const form = ref({
   fullName: '',
@@ -295,7 +432,10 @@ const resumeData = computed(() => ({
   location: form.value.location,
   linkedinUrl: form.value.linkedin,
   githubUrl: form.value.github,
-  portfolioUrl: form.value.portfolio
+  portfolioUrl: form.value.portfolio,
+  summary: summary.value,
+  education: educationList.value,
+  skills: skillsList.value
 }))
 
 const currentStepLabel = computed(() => {
@@ -353,6 +493,35 @@ const showToast = (type, message) => {
   toast.value = { show: true, type, message }
 }
 
+const loadTemplates = async () => {
+  if (!summaryCategory.value) {
+    summaryTemplates.value = []
+    return
+  }
+
+  try {
+    const response = await resumeApi.getSummaryTemplatesByCategory(
+      summaryCategory.value
+    )
+    summaryTemplates.value = response
+  } catch (error) {
+    showToast(
+      'error',
+      error.message || 'Failed to load templates'
+    )
+  }
+}
+
+const applyTemplate = () => {
+  const template = summaryTemplates.value.find(
+    t => t.id === selectedTemplateId.value
+  )
+
+  if (!template) return
+
+  summary.value = template.templateText
+}
+
 const handleSaveDraft = async () => {
   Object.keys(form.value).forEach(field => {
     if (['fullName', 'email', 'phone', 'linkedin', 'github', 'portfolio'].includes(field)) {
@@ -379,24 +548,14 @@ const handleSaveDraft = async () => {
     })
     
     localStorage.setItem("resumeId", response.data.resumeId)
-   
-    
     showToast('success', 'Draft saved successfully')
   } catch (error) {
-
-  if (error.data?.errors?.length) {
-    showToast(
-      'error',
-      error.data.errors.join('\n')
-    )
-  } else {
-    showToast(
-      'error',
-      error.message || 'Failed to save draft'
-    )
-  }
-
-} finally {
+    if (error.data?.errors?.length) {
+      showToast('error', error.data.errors.join('\n'))
+    } else {
+      showToast('error', error.message || 'Failed to save draft')
+    }
+  } finally {
     isSubmitting.value = false
   }
 }
@@ -427,7 +586,6 @@ const handleNext = async () => {
     })
 
     localStorage.setItem("resumeId", response.data.resumeId)
-    
 
     if (!completedSteps.value.includes(1)) {
       completedSteps.value.push(1)
@@ -436,20 +594,55 @@ const handleNext = async () => {
     currentStep.value += 1
     showToast('success', 'Personal details saved')
   } catch (error) {
+    if (error.data?.errors?.length) {
+      showToast('error', error.data.errors.join('\n'))
+    } else {
+      showToast('error', error.message || 'Failed to save')
+    }
+  } finally {
+    isSubmitting.value = false
+  }
+}
 
-  if (error.data?.errors?.length) {
-    showToast(
-      'error',
-      error.data.errors.join('\n')
-    )
-  } else {
-    showToast(
-      'error',
-      error.message || 'Failed to save'
-    )
+const handleSummaryNext = async () => {
+  const resumeId = localStorage.getItem("resumeId")
+
+  if (!resumeId) {
+    showToast("error", "Resume not found. Please complete Personal Details first.")
+    return
   }
 
-} finally {
+  if (!summary.value.trim()) {
+    showToast("error", "Professional Summary cannot be empty.")
+    return
+  }
+
+  isSubmitting.value = true
+
+  try {
+    await resumeApi.saveProfessionalSummary(
+      resumeId,
+      {
+        summaryText: summary.value.trim()
+      }
+    )
+
+    if (!completedSteps.value.includes(2)) {
+      completedSteps.value.push(2)
+    }
+
+    currentStep.value = 3
+
+    showToast(
+      "success",
+      "Professional Summary saved successfully."
+    )
+  } catch (error) {
+    showToast(
+      "error",
+      error.message || "Failed to save Professional Summary."
+    )
+  } finally {
     isSubmitting.value = false
   }
 }

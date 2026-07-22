@@ -10,7 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SkillResponseDTO {
-
-    private Long skillId;
-
+    private Long id;
+    private Long resumeId;
+    
+    // Updated these fields to match the guide!
+    private String name;
+    private String level;
+    
+    private String category;
+    private Integer displayOrder;
 }

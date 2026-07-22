@@ -1,9 +1,6 @@
 package com.resumeshastra.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
@@ -11,6 +8,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ExperienceResponseDTO {
 
-    private Long experienceId;
+    private Long id;
 
+    private String companyName;
+
+    private String jobTitle;
+
+    private String employmentType;
+
+    private String location;
+
+    private String startDate;
+
+    private String endDate;
+
+    private Boolean currentlyWorking;
+
+    private String description;
+
+    private Integer displayOrder;
 }

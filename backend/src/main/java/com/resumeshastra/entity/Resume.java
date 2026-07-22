@@ -37,6 +37,12 @@ public class Resume {
     private String portfolioUrl;
 
     private String location;
+    @OneToOne(
+        mappedBy = "resume",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+)
+    private ProfessionalSummary professionalSummary;
 
     @OneToMany(
             mappedBy = "resume",

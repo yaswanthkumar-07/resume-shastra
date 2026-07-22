@@ -13,32 +13,74 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/resumes/{resumeId}/skills")
+@RequestMapping("/api/skills")
 @RequiredArgsConstructor
-
 public class SkillController {
 
     private final SkillService skillService;
 
-    @PostMapping
+    @PostMapping("/{resumeId}")
     public ResponseEntity<ApiResponse<SkillResponseDTO>> saveSkill(
             @PathVariable Long resumeId,
             @Valid @RequestBody SkillDTO dto) {
-
-        Long skillId = skillService.saveSkill(resumeId, dto);
-
-        SkillResponseDTO result = SkillResponseDTO.builder()
-                .skillId(skillId)
-                .build();
-
-        ApiResponse<SkillResponseDTO> response =
+            
+        SkillResponseDTO response = skillService.saveSkill(resumeId, dto);
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<SkillResponseDTO>builder()
                         .status("SUCCESS")
                         .message("Skill saved successfully")
-                        .data(result)
+                        .data(response)
                         .errors(List.of())
-                        .build();
+                        .build()
+        );
+    }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    @GetMapping("/{resumeId}")
+    public ResponseEntity<ApiResponse<List<SkillResponseDTO>>> getSkills(
+            @PathVariable Long resumeId) {
+            
+        List<SkillResponseDTO> response = skillService.getSkills(resumeId);
+        
+        return ResponseEntity.ok(
+                ApiResponse.<List<SkillResponseDTO>>builder()
+                        .status("SUCCESS")
+                        .message("Skills fetched successfully")
+                        .data(response)
+                        .errors(List.of())
+                        .build()
+        );
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<SkillResponseDTO>> updateSkill(
+            @PathVariable Long id,
+            @Valid @RequestBody SkillDTO dto) {
+            
+        SkillResponseDTO response = skillService.updateSkill(id, dto);
+        
+        return ResponseEntity.ok(
+                ApiResponse.<SkillResponseDTO>builder()
+                        .status("SUCCESS")
+                        .message("Skill updated successfully")
+                        .data(response)
+                        .errors(List.of())
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteSkill(@PathVariable Long id) {
+    
+        skillService.deleteSkill(id);
+        
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .status("SUCCESS")
+                        .message("Skill deleted successfully")
+                        .data(null)
+                        .errors(List.of())
+                        .build()
+        );
     }
 }

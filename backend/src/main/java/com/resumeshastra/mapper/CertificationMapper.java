@@ -2,6 +2,8 @@ package com.resumeshastra.mapper;
 
 import com.resumeshastra.dto.CertificationDTO;
 import com.resumeshastra.entity.Certification;
+import com.resumeshastra.response.CertificationResponseDTO;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,16 +22,18 @@ public class CertificationMapper {
                 .build();
     }
 
-    public CertificationDTO entityToDto(Certification certification) {
+    public CertificationResponseDTO entityToResponse(Certification certification) {
 
-        return CertificationDTO.builder()
-                .certificationName(certification.getCertificationName())
-                .issuingOrganization(certification.getIssuingOrganization())
-                .issueDate(certification.getIssueDate())
-                .expiryDate(certification.getExpiryDate())
-                .credentialId(certification.getCredentialId())
-                .credentialUrl(certification.getCredentialUrl())
-                .displayOrder(certification.getDisplayOrder())
-                .build();
-    }
+    return CertificationResponseDTO.builder()
+            .id(certification.getId())
+            .resumeId(certification.getResume().getId())
+            .certificationName(certification.getCertificationName())
+            .issuingOrganization(certification.getIssuingOrganization())
+            .issueDate(certification.getIssueDate())
+            .expiryDate(certification.getExpiryDate())
+            .credentialId(certification.getCredentialId())
+            .credentialUrl(certification.getCredentialUrl())
+            .displayOrder(certification.getDisplayOrder())
+            .build();
+}
 }

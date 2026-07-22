@@ -1,9 +1,6 @@
 package com.resumeshastra.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
@@ -11,6 +8,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProjectResponseDTO {
 
-    private Long projectId;
+    private Long id;
 
+    private String projectName;
+
+    private String description;
+
+    private String technologies;
+
+    private String githubUrl;
+
+    private String liveUrl;
+
+    private Boolean featured;
+
+    private Integer displayOrder;
 }

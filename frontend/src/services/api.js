@@ -26,7 +26,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     let message = 'An error occurred'
-    
+
     if (error.response) {
       message = error.response.data?.message || error.response.statusText || message
     } else if (error.request) {
@@ -44,71 +44,151 @@ apiClient.interceptors.response.use(
 )
 
 export const resumeApi = {
-  savePersonalDetails: (data) => 
+
+  // =============================
+  // Resume
+  // =============================
+
+  savePersonalDetails: (data) =>
     apiClient.post('/resumes/personal', data).then(res => res.data),
 
-  getResume: (id) => 
+  getResume: (id) =>
     apiClient.get(`/resumes/${id}`).then(res => res.data),
 
-  updateResume: (id, data) => 
+  updateResume: (id, data) =>
     apiClient.put(`/resumes/${id}`, data).then(res => res.data),
 
-  deleteResume: (id) => 
+  deleteResume: (id) =>
     apiClient.delete(`/resumes/${id}`).then(res => res.data),
 
-  listResumes: () => 
+  listResumes: () =>
     apiClient.get('/resumes').then(res => res.data),
 
-  getPersonalDetails: (resumeId) => 
+  getPersonalDetails: (resumeId) =>
     apiClient.get(`/resumes/${resumeId}/personal-details`).then(res => res.data),
 
-  saveEducation: (resumeId, data) => 
-    apiClient.post(`/resumes/${resumeId}/education`, data).then(res => res.data),
+  // =============================
+  // Professional Summary
+  // =============================
 
-  getEducation: (resumeId) => 
-    apiClient.get(`/resumes/${resumeId}/education`).then(res => res.data),
+  saveProfessionalSummary: (resumeId, data) =>
+    apiClient.post(`/resumes/${resumeId}/summary`, data).then(res => res.data),
 
-  deleteEducation: (resumeId, id) => 
-    apiClient.delete(`/resumes/${resumeId}/education/${id}`).then(res => res.data),
+  getProfessionalSummary: (resumeId) =>
+    apiClient.get(`/resumes/${resumeId}/summary`).then(res => res.data),
 
-  saveSkills: (resumeId, data) => 
-    apiClient.post(`/resumes/${resumeId}/skills`, data).then(res => res.data),
+  updateProfessionalSummary: (resumeId, data) =>
+    apiClient.put(`/resumes/${resumeId}/summary`, data).then(res => res.data),
 
-  getSkills: (resumeId) => 
-    apiClient.get(`/resumes/${resumeId}/skills`).then(res => res.data),
+  deleteProfessionalSummary: (resumeId) =>
+    apiClient.delete(`/resumes/${resumeId}/summary`).then(res => res.data),
 
-  saveProject: (resumeId, data) => 
+  // =============================
+  // Summary Templates
+  // =============================
+
+  getSummaryTemplatesByCategory: (category) =>
+    apiClient.get('/summary-templates', {
+      params: { category }
+    }).then(res => res.data),
+
+  getSummaryTemplate: (id) =>
+    apiClient.get(`/summary-templates/${id}`).then(res => res.data),
+
+// =============================
+// Education
+// =============================
+
+saveEducation: (resumeId, data) =>
+  apiClient.post(`/resumes/${resumeId}/education`, data).then(res => res.data),
+
+getEducation: (resumeId) =>
+  apiClient.get(`/resumes/${resumeId}/education`).then(res => res.data),
+
+getEducationById: (resumeId, id) =>
+  apiClient.get(`/resumes/${resumeId}/education/${id}`).then(res => res.data),
+
+updateEducation: (resumeId, id, data) =>
+  apiClient.put(`/resumes/${resumeId}/education/${id}`, data).then(res => res.data),
+
+updateEducationDisplayOrder: (resumeId, id, displayOrder) =>
+  apiClient.patch(
+    `/resumes/${resumeId}/education/${id}/display-order`,
+    null,
+    {
+      params: {
+        displayOrder
+      }
+    }
+  ).then(res => res.data),
+
+deleteEducation: (resumeId, id) =>
+  apiClient.delete(`/resumes/${resumeId}/education/${id}`).then(res => res.data),
+
+// =============================
+  // Skills
+  // =============================
+
+  saveSkill: (resumeId, data) =>
+    apiClient.post(`/skills/${resumeId}`, data).then(res => res.data),
+
+  getSkills: (resumeId) =>
+    apiClient.get(`/skills/${resumeId}`).then(res => res.data),
+
+  // =============================
+  // Projects
+  // =============================
+
+  saveProject: (resumeId, data) =>
     apiClient.post(`/resumes/${resumeId}/projects`, data).then(res => res.data),
 
-  getProjects: (resumeId) => 
+  getProjects: (resumeId) =>
     apiClient.get(`/resumes/${resumeId}/projects`).then(res => res.data),
 
-  deleteProject: (resumeId, id) => 
+  deleteProject: (resumeId, id) =>
     apiClient.delete(`/resumes/${resumeId}/projects/${id}`).then(res => res.data),
 
-  saveExperience: (resumeId, data) => 
+  // =============================
+  // Experience
+  // =============================
+
+  saveExperience: (resumeId, data) =>
     apiClient.post(`/resumes/${resumeId}/experience`, data).then(res => res.data),
 
-  getExperience: (resumeId) => 
+  getExperience: (resumeId) =>
     apiClient.get(`/resumes/${resumeId}/experience`).then(res => res.data),
 
-  deleteExperience: (resumeId, id) => 
+  deleteExperience: (resumeId, id) =>
     apiClient.delete(`/resumes/${resumeId}/experience/${id}`).then(res => res.data),
 
-  saveCertifications: (resumeId, data) => 
+  // =============================
+  // Certifications
+  // =============================
+
+  saveCertifications: (resumeId, data) =>
     apiClient.post(`/resumes/${resumeId}/certifications`, data).then(res => res.data),
 
-  getCertifications: (resumeId) => 
+  getCertifications: (resumeId) =>
     apiClient.get(`/resumes/${resumeId}/certifications`).then(res => res.data),
 
-  deleteCertification: (resumeId, id) => 
+  deleteCertification: (resumeId, id) =>
     apiClient.delete(`/resumes/${resumeId}/certifications/${id}`).then(res => res.data),
 
-  analyzeResume: (resumeId) => 
+  // =============================
+  // ATS Analysis
+  // =============================
+
+  analyzeResume: (resumeId) =>
     apiClient.get(`/resumes/${resumeId}/ats-analysis`).then(res => res.data),
 
-  exportResume: (resumeId, format) => 
-    apiClient.get(`/resumes/${resumeId}/export?format=${format}`, { responseType: 'blob' })
+  // =============================
+  // Export
+  // =============================
+
+  exportResume: (resumeId, format) =>
+    apiClient.get(`/resumes/${resumeId}/export?format=${format}`, {
+      responseType: 'blob'
+    })
 }
 
 export default apiClient

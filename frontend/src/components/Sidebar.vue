@@ -1,6 +1,6 @@
 <!-- src/components/Sidebar.vue -->
 <template>
-  <aside class="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 p-6 space-y-8">
+  <aside class="hidden lg:flex flex-col w-56 bg-white border-r border-gray-200 p-5 space-y-6">
     <!-- Steps List -->
     <nav class="space-y-3">
       <button
